@@ -2,6 +2,7 @@ package zonafit.datos;
 
 import zonafit.dominio.Cliente;
 
+import java.beans.ExceptionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -108,11 +109,61 @@ public class ClienteDAO implements ICLienteDAO{
 
     @Override
     public boolean modificarCliente(Cliente cliente) {
+
+        PreparedStatement ps;
+        var con = getConexion();
+        var query = "update cliente set nombre = ?, apellido = ?, membresia = ? " +
+                "where id = ?";
+
+        try {
+            ps = con.prepareStatement(query);
+            ps.setString(1, cliente.getNombre());
+            ps.setString(2, cliente.getApellido());
+            ps.setInt(3, cliente.getMembresia());
+            ps.setInt(4, cliente.getId());
+
+            ps.execute();
+
+            return true;
+
+        }catch (Exception e){
+            System.out.println("Error al modificar el cliente: " + e.getMessage());
+        }finally {
+            try {
+                con.close();
+            }catch (Exception e){
+                System.out.println("Error al cerrar la conexion: " + e.getMessage());
+            }
+        }
+
         return false;
     }
 
     @Override
     public boolean eliminarCliente(Cliente cliente) {
+
+        PreparedStatement ps;
+        var con = getConexion();
+        var query = "delete from cliente where id = ?";
+
+        try {
+
+            ps = con.prepareStatement(query);
+            ps.setInt(1, cliente.getId());
+            ps.execute();
+
+            return true;
+
+        }catch (Exception e){
+            System.out.println("Error al eliminar el cliente: " + e.getMessage());
+        }finally {
+            try {
+                con.close();
+            }catch (Exception e){
+                System.out.println("Error al cerrar la conexion");
+            }
+        }
+
         return false;
     }
 
@@ -136,17 +187,42 @@ public class ClienteDAO implements ICLienteDAO{
 //
         // Agregar cliente
 
-        var cliente = new Cliente("Daniel", "Ortiz", 300);
-        var agregado = clientesDAO.agregarCliente(cliente);
-
-        if (agregado)
-            System.out.println("Cliente agregado");
-        else
-            System.out.println("Error al agregar el cliente");
+//        var cliente = new Cliente("Daniel", "Ortiz", 300);
+//        var agregado = clientesDAO.agregarCliente(cliente);
+//
+//        if (agregado)
+//            System.out.println("Cliente agregado");
+//        else
+//            System.out.println("Error al agregar el cliente");
 
         System.out.println("*** Listado de cientes ***");
         var clientes = clientesDAO.listarClientes();
         clientes.forEach(System.out::println);
+
+//        System.out.println(" - Modificar cliente -");
+//        var cliente = new Cliente(4,"C. Daniel", "Ortiz", 300);
+//        var modificado = clientesDAO.modificarCliente(cliente);
+//
+//        if (modificado)
+//            System.out.println("se modificó el cliente");
+//        else
+//            System.out.println("El cliente no fue modificado");
+//
+
+        // Eliminar cliente
+
+        var clienteEliminar = new Cliente(3);
+        var eliminado = clientesDAO.eliminarCliente(clienteEliminar);
+
+        if (eliminado)
+            System.out.println("Se eliminó el cliente");
+        else
+            System.out.println("El cliente no fue eliminado");
+
+        System.out.println("*** Listado de cientes ***");
+        clientes = clientesDAO.listarClientes();
+        clientes.forEach(System.out::println);
+
     }
 }
 
