@@ -80,6 +80,46 @@ public class ZonaFitApp {
                 else
                     System.out.println("Cliente no ingresado");
             }
+            case 4 ->{
+                //4. Moicicar cliente
+                System.out.println("** Modificar un cliente **");
+                System.out.print("Ingresa el id de cliente: ");
+                var idCliente = Integer.parseInt(consola.nextLine());
+                System.out.print("Ingresa el nombre: ");
+                var nombre = consola.nextLine();
+                System.out.print("Ingresa el apellido: ");
+                var apellido = consola.nextLine();
+                System.out.print("Ingresa membresia: ");
+                var membresia = Integer.parseInt(consola.nextLine());
+
+                var cliente = new Cliente(idCliente, nombre, apellido, membresia);
+                var modificado = clienteDAO.modificarCliente(cliente);
+
+                if (modificado)
+                    System.out.println("El cliente fue modificado");
+                else
+                    System.out.println("El cliente no fue modificado");
+
+            }
+            case 5 ->{
+                //5. Eliminar cliente
+                System.out.println("** Eliminar cliente **");
+                System.out.print("Ingresa el id del cliente a elminar: ");
+                var idCliente = Integer.parseInt(consola.nextLine());
+                var cliente = new Cliente(idCliente);
+                var eliminado = clienteDAO.eliminarCliente(cliente);
+
+                if (eliminado)
+                    System.out.println("Cliente eliminado: " + cliente);
+                else
+                    System.out.println("EL cliente no fue eliminado: "+ cliente);
+            }
+            case 6-> {
+                // 6. Salir del sistema
+                System.out.println("Vuelva pronto..");
+                salir = true;
+            }
+            default -> System.out.println("Opción desconocida..");
         }
         return salir;
     }
